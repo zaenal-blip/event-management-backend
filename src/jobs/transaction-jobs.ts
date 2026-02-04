@@ -47,21 +47,3 @@ export class TransactionJobs {
     }
   };
 }
-
-// Example usage with node-cron (install: npm install node-cron @types/node-cron)
-/*
-import cron from "node-cron";
-import { prisma } from "./lib/prisma.js";
-
-const transactionJobs = new TransactionJobs(prisma);
-
-// Run every 5 minutes
-cron.schedule("*/5 * * * *", async () => {
-  await transactionJobs.expireTransactions();
-});
-
-// Run every hour
-cron.schedule("0 * * * *", async () => {
-  await transactionJobs.cancelTransactions();
-});
-*/

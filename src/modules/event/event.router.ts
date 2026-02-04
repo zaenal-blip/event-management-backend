@@ -28,6 +28,12 @@ export class EventRouter {
       authorize("ORGANIZER"),
       this.eventController.createVoucher
     );
+    this.router.put(
+      "/:id/publish",
+      authenticate,
+      authorize("ORGANIZER"),
+      this.eventController.publishEvent
+    );
   };
 
   getRouter = () => {

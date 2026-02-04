@@ -32,6 +32,11 @@ export class TransactionRouter {
       authenticate,
       this.transactionController.uploadPaymentProof
     );
+    this.router.put(
+      "/transactions/:id/cancel",
+      authenticate,
+      this.transactionController.cancelTransaction
+    );
 
     // Organizer routes
     this.router.put(

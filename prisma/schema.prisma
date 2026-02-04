@@ -13,7 +13,7 @@ model User {
   password     String
   avatar       String?
   role         Role      @default(CUSTOMER)
-  referralCode String?
+  referralCode String?   @unique
   point        Int?      @default(0)
   phone        String?
   deletedAt    DateTime?
