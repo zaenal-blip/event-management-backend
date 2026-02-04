@@ -135,7 +135,7 @@ export class UserService {
    */
   updateProfile = async (
     id: number,
-    body: { name?: string; email?: string; phone?: string },
+    body: { name?: string; email?: string; phone?: string; avatar?: string },
   ) => {
     await this.getUser(id);
 
@@ -154,10 +154,16 @@ export class UserService {
     }
 
     // Build update data object with only provided fields
-    const updateData: { name?: string; email?: string; phone?: string } = {};
+    const updateData: {
+      name?: string;
+      email?: string;
+      phone?: string;
+      avatar?: string;
+    } = {};
     if (body.name !== undefined) updateData.name = body.name;
     if (body.email !== undefined) updateData.email = body.email;
     if (body.phone !== undefined) updateData.phone = body.phone;
+    if (body.avatar !== undefined) updateData.avatar = body.avatar;
 
     await this.prisma.user.update({
       where: { id },

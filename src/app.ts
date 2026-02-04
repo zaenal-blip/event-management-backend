@@ -17,6 +17,8 @@ import { UserRouter } from "./modules/user/user.router.js";
 import { EventRouter } from "./modules/event/event.router.js";
 import { TransactionRouter } from "./modules/transaction/transaction.router.js";
 import { ReviewRouter } from "./modules/review/review.router.js";
+import { AuthMiddleware } from "./middleware/auth.middleware.js";
+import { ValidationMiddleware } from "./middleware/validation.middleware.js";
 import { Scheduler } from "./jobs/scheduler.js";
 
 const PORT = 8000;
@@ -54,9 +56,13 @@ export class App {
     const transactionController = new TransactionController(transactionService);
     const reviewController = new ReviewController(reviewService);
 
+    // middlewares
+    const authMiddleware = new AuthMiddleware();
+    const validationMiddleware = new ValidationMiddleware();
+
     // routes
-    const authRouter = new AuthRouter(authController);
-    const userRouter = new UserRouter(userController);
+    const authRouter = new AuthRouter(authController, validationMiddleware);
+    const userRouter = new UserRouter(userController, authMiddleware);
     const eventRouter = new EventRouter(eventController);
     const transactionRouter = new TransactionRouter(transactionController);
     const reviewRouter = new ReviewRouter(reviewController);
