@@ -93,7 +93,7 @@ exports.UserScalarFieldEnum = {
     password: 'password',
     avatar: 'avatar',
     role: 'role',
-    referallCode: 'referallCode',
+    referralCode: 'referralCode',
     point: 'point',
     deletedAt: 'deletedAt',
     createdAt: 'createdAt',

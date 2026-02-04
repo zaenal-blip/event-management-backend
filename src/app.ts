@@ -17,6 +17,7 @@ import { UserRouter } from "./modules/user/user.router.js";
 import { EventRouter } from "./modules/event/event.router.js";
 import { TransactionRouter } from "./modules/transaction/transaction.router.js";
 import { ReviewRouter } from "./modules/review/review.router.js";
+import { Scheduler } from "./jobs/scheduler.js";
 
 const PORT = 8000;
 
@@ -66,6 +67,9 @@ export class App {
     this.app.use("/events", eventRouter.getRouter());
     this.app.use("/", transactionRouter.getRouter()); // Transactions use root-level routes
     this.app.use("/", reviewRouter.getRouter()); // Reviews use root-level routes
+
+    // Initialize scheduler for background jobs
+    new Scheduler(prismaClient);
   };
 
   private handleError = () => {

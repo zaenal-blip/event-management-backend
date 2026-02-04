@@ -74,7 +74,6 @@ export class EventService {
           where: {
             startDate: { lte: new Date() },
             endDate: { gte: new Date() },
-            usedCount: { lt: Prisma.sql`usage_limit` },
           },
         },
         _count: {
@@ -140,7 +139,6 @@ export class EventService {
           where: {
             startDate: { lte: new Date() },
             endDate: { gte: new Date() },
-            usedCount: { lt: Prisma.sql`usage_limit` },
           },
         },
       },
@@ -293,5 +291,55 @@ export class EventService {
     });
 
     return voucher;
+  };
+
+  publishEvent = async (eventId: number, organizerId: number) => {
+    // Find organizer
+    const organizer = await this.prisma.organizer.findUnique({
+      where: { userId: organizerId },
+    });
+
+    if (!organizer) {
+      throw new ApiError("Organizer not found", 404);
+    }
+
+    // Find event and verify ownership
+    const event = await this.prisma.event.findUnique({
+      where: { id: eventId },
+    });
+
+    if (!event) {
+      throw new ApiError("Event not found", 404);
+    }
+
+    if (event.organizerId !== organizer.id) {
+      throw new ApiError("Unauthorized to publish this event", 403);
+    }
+
+    if (event.status !== "DRAFT") {
+      throw new ApiError("Only draft events can be published", 400);
+    }
+
+    // Update status to PUBLISHED
+    const updatedEvent = await this.prisma.event.update({
+      where: { id: eventId },
+      data: { status: "PUBLISHED" },
+      include: {
+        ticketTypes: true,
+        organizer: {
+          include: {
+            user: true,
+          },
+        },
+        vouchers: {
+          where: {
+            startDate: { lte: new Date() },
+            endDate: { gte: new Date() },
+          },
+        },
+      },
+    });
+
+    return updatedEvent;
   };
 }

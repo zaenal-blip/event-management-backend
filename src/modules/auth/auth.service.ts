@@ -122,4 +122,23 @@ export class AuthService {
     const { password, ...userWithoutPassword } = user;
     return { ...userWithoutPassword, accessToken };
   };
+
+  getProfile = async (userId: number) => {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId, deletedAt: null },
+      omit: { password: true },
+      include: {
+        points: {
+          orderBy: { createdAt: 'desc' },
+          take: 10, // Recent point history
+        },
+      },
+    });
+
+    if (!user) {
+      throw new ApiError("User not found", 404);
+    }
+
+    return user;
+  };
 }

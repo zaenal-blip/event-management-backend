@@ -13,6 +13,11 @@ export class TransactionService {
       throw new ApiError("Quantity must be greater than 0", 400);
     }
 
+    // Validate points to use
+    if (pointsToUse < 0) {
+      throw new ApiError("Points to use cannot be negative", 400);
+    }
+
     // Use SQL transaction for atomicity
     const transaction = await this.prisma.$transaction(async (tx) => {
       // 1. Lock ticket type and check availability
@@ -153,8 +158,8 @@ export class TransactionService {
       }
 
       // 11. Create transaction
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + 2); // 2 hours from now
+      const expiredAt = new Date();
+      expiredAt.setHours(expiredAt.getHours() + 2); // 2 hours from now
 
       const newTransaction = await tx.transaction.create({
         data: {
@@ -396,6 +401,67 @@ export class TransactionService {
 
     // TODO: Send email notification to customer
     // await sendEmailNotification(updatedTransaction.user.email, "TRANSACTION_REJECTED", updatedTransaction);
+
+    return updatedTransaction;
+  };
+
+  cancelTransaction = async (transactionId: number, userId: number) => {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+
+    if (!transaction) {
+      throw new ApiError("Transaction not found", 404);
+    }
+
+    if (transaction.userId !== userId) {
+      throw new ApiError("You don't have permission to cancel this transaction", 403);
+    }
+
+    if (!["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)) {
+      throw new ApiError("Transaction cannot be cancelled at this stage", 400);
+    }
+
+    // Rollback in transaction
+    await this.rollbackTransaction(transactionId);
+
+    const updatedTransaction = await this.prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        status: "CANCELLED",
+      },
+      include: {
+        event: {
+          include: {
+            organizer: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatar: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        ticketType: true,
+        voucher: true,
+        coupon: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    // TODO: Send email notification to organizer
+    // await sendEmailNotification(updatedTransaction.event.organizer.user.email, "TRANSACTION_CANCELLED", updatedTransaction);
 
     return updatedTransaction;
   };
