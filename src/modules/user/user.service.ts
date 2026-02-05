@@ -3,13 +3,17 @@ import { PaginationQueryParams } from "../../types/pagination.js";
 import { CreateUserBody } from "../../types/user.js";
 import { ApiError } from "../../utils/api-error.js";
 import { comparePassword, hashPassword } from "../../lib/argon.js";
+import { CloudinaryService } from "../cloudinary/cloudinary.service.js";
 
 interface GetUsersQuery extends PaginationQueryParams {
   search: string;
 }
 
 export class UserService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(
+    private prisma: PrismaClient,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   getUsers = async (query: GetUsersQuery) => {
     const { page, sortBy, sortOrder, take, search } = query;
@@ -164,6 +168,14 @@ export class UserService {
     if (body.email !== undefined) updateData.email = body.email;
     if (body.phone !== undefined) updateData.phone = body.phone;
     if (body.avatar !== undefined) updateData.avatar = body.avatar;
+
+    // Check if avatar is being updated and remove old one from Cloudinary
+    if (body.avatar && body.avatar !== (await this.getUser(id)).avatar) {
+      const currentUser = await this.getUser(id);
+      if (currentUser.avatar) {
+        await this.cloudinaryService.removeByUrl(currentUser.avatar);
+      }
+    }
 
     await this.prisma.user.update({
       where: { id },
