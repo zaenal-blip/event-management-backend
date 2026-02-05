@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { ApiError } from "../../utils/api-error.js";
 import { CreateTransactionBody, UploadPaymentProofBody } from "../../types/transaction.js";
+import { sendEmail } from "../../lib/mail.js";
 
 export class TransactionService {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient) { }
 
   createTransaction = async (userId: number, eventId: number, body: CreateTransactionBody) => {
     const { ticketTypeId, quantity, voucherCode, couponCode, pointsToUse = 0 } = body;
@@ -327,8 +328,19 @@ export class TransactionService {
       },
     });
 
-    // TODO: Send email notification to customer
-    // await sendEmailNotification(updatedTransaction.user.email, "TRANSACTION_ACCEPTED", updatedTransaction);
+    // Send email notification to customer
+    await sendEmail({
+      to: updatedTransaction.user.email,
+      subject: "Transaction Confirmed - Event Ticket",
+      html: `
+        <h1>Transaction Confirmed</h1>
+        <p>Dear ${updatedTransaction.user.name},</p>
+        <p>Your transaction for event <strong>${updatedTransaction.event.title}</strong> has been confirmed.</p>
+        <p>Ticket Type: ${updatedTransaction.ticketType.name}</p>
+        <p>Quantity: ${updatedTransaction.ticketQty}</p>
+        <p>Have a great time!</p>
+      `,
+    });
 
     return updatedTransaction;
   };
@@ -399,8 +411,100 @@ export class TransactionService {
       },
     });
 
-    // TODO: Send email notification to customer
-    // await sendEmailNotification(updatedTransaction.user.email, "TRANSACTION_REJECTED", updatedTransaction);
+    // Send email notification to customer
+    await sendEmail({
+      to: updatedTransaction.user.email,
+      subject: "Transaction Rejected - Event Ticket",
+      html: `
+        <h1>Transaction Rejected</h1>
+        <p>Dear ${updatedTransaction.user.name},</p>
+        <p>Your transaction for event <strong>${updatedTransaction.event.title}</strong> has been rejected by the organizer.</p>
+        <p>If you have used any points or vouchers, they have been restored to your account.</p>
+      `,
+    });
+
+    return updatedTransaction;
+  };
+
+  cancelTransaction = async (transactionId: number, userId: number) => {
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: transactionId },
+    });
+
+    if (!transaction) {
+      throw new ApiError("Transaction not found", 404);
+    }
+
+    if (transaction.userId !== userId) {
+      throw new ApiError("You don't have permission to cancel this transaction", 403);
+    }
+
+    if (!["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)) {
+      throw new ApiError("Transaction cannot be cancelled at this stage", 400);
+    }
+
+    // Rollback in transaction
+    await this.rollbackTransaction(transactionId);
+
+    const updatedTransaction = await this.prisma.transaction.update({
+      where: { id: transactionId },
+      data: {
+        status: "CANCELLED",
+      },
+      include: {
+        event: {
+          include: {
+            organizer: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    avatar: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        ticketType: true,
+        voucher: true,
+        coupon: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    // Send email notification to organizer
+    // Note: The organizer user email is deeply nested in the include hierarchy
+    const organizerEmail = updatedTransaction.event.organizer.user.email;
+
+    // Only send email if cancelled by user (which is this endpoint logic)
+    // If auto-cancelled by job, it might call this or similar logic.
+    // For now assuming this endpoint is called by user manually cancelling before confirmation (if allowed) or system.
+    // In this specific method 'cancelTransaction', it checks if transaction.userId === userId, so it's the customer cancelling.
+    // So we notify the organizer.
+
+    // But wait, the standard flow says "Organizer doesn't accept/reject within 3 days -> Auto Cancel".
+    // This endpoint allows USER to cancel? Checking logic... 
+    // Yes: "transaction.userId !== userId -> throw 403". So this is CUSTOMER cancelling.
+
+    await sendEmail({
+      to: organizerEmail || "", // Should be available
+      subject: "Transaction Cancelled by User",
+      html: `
+        <h1>Transaction Cancelled</h1>
+        <p>A transaction for your event <strong>${updatedTransaction.event.title}</strong> has been cancelled by the user.</p>
+        <p>Transaction ID: ${updatedTransaction.id}</p>
+      `,
+    });
 
     return updatedTransaction;
   };

@@ -1,9 +1,11 @@
 import express from "express";
 export class UserRouter {
     userController;
+    authMiddleware;
     router;
-    constructor(userController) {
+    constructor(userController, authMiddleware) {
         this.userController = userController;
+        this.authMiddleware = authMiddleware;
         this.router = express.Router();
         this.initRoutes();
     }

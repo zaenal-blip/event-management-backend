@@ -3,6 +3,15 @@ import { ApiError } from "../utils/api-error.js";
 import jwt from "jsonwebtoken";
 import { Role } from "../generated/prisma/enums.js";
 
+export interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+    role: Role;
+  };
+}
+
 export class AuthMiddleware {
   verifyToken = (secretKey: string) => {
     return (req: Request, res: Response, next: NextFunction) => {
@@ -18,6 +27,7 @@ export class AuthMiddleware {
             throw new ApiError("Token Invalid", 401);
           }
         }
+        (req as AuthRequest).user = payload as any;
         res.locals.user = payload;
         next();
       });
