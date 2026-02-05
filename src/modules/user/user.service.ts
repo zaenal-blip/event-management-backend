@@ -153,7 +153,21 @@ export class UserService {
       });
 
       if (existingUser) {
-        throw new ApiError("Email already exist", 400);
+        throw new ApiError("Email already taken", 400);
+      }
+    }
+
+    // If phone is being updated, check if it's already taken by another user
+    if (body.phone) {
+      const existingUser = await this.prisma.user.findFirst({
+        where: {
+          phone: body.phone,
+          id: { not: id }, // Exclude current user
+        },
+      });
+
+      if (existingUser) {
+        throw new ApiError("Phone number already taken", 400);
       }
     }
 
@@ -177,12 +191,13 @@ export class UserService {
       }
     }
 
-    await this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data: updateData,
+      omit: { password: true },
     });
 
-    return { message: "Profile updated successfully" };
+    return { ...updatedUser, message: "Profile updated successfully" };
   };
 
   deleteUser = async (id: number) => {
