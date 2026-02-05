@@ -17,6 +17,8 @@ import { UserRouter } from "./modules/user/user.router.js";
 import { EventRouter } from "./modules/event/event.router.js";
 import { TransactionRouter } from "./modules/transaction/transaction.router.js";
 import { ReviewRouter } from "./modules/review/review.router.js";
+import { MediaController } from "./modules/media/media.controller.js";
+import { MediaRouter } from "./modules/media/media.router.js";
 import { AuthMiddleware } from "./middleware/auth.middleware.js";
 import { ValidationMiddleware } from "./middleware/validation.middleware.js";
 import { Scheduler } from "./jobs/scheduler.js";
@@ -63,9 +65,16 @@ export class App {
     // routes
     const authRouter = new AuthRouter(authController, validationMiddleware);
     const userRouter = new UserRouter(userController, authMiddleware);
-    const eventRouter = new EventRouter(eventController);
-    const transactionRouter = new TransactionRouter(transactionController);
-    const reviewRouter = new ReviewRouter(reviewController);
+    const eventRouter = new EventRouter(eventController, authMiddleware);
+    const transactionRouter = new TransactionRouter(
+      transactionController,
+      authMiddleware // Inject authMiddleware
+    );
+    const reviewRouter = new ReviewRouter(reviewController, authMiddleware); // Inject authMiddleware
+
+    // media
+    const mediaController = new MediaController();
+    const mediaRouter = new MediaRouter(mediaController);
 
     // entry point
     this.app.use("/auth", authRouter.getRouter());
@@ -73,6 +82,10 @@ export class App {
     this.app.use("/events", eventRouter.getRouter());
     this.app.use("/", transactionRouter.getRouter()); // Transactions use root-level routes
     this.app.use("/", reviewRouter.getRouter()); // Reviews use root-level routes
+    this.app.use("/media", mediaRouter.getRouter());
+
+    // serve uploaded files
+    this.app.use("/uploads", express.static("uploads"));
 
     // Initialize scheduler for background jobs
     new Scheduler(prismaClient);

@@ -119,6 +119,8 @@ export class UserService {
             updateData.email = body.email;
         if (body.phone !== undefined)
             updateData.phone = body.phone;
+        if (body.avatar !== undefined)
+            updateData.avatar = body.avatar;
         await this.prisma.user.update({
             where: { id },
             data: updateData,
