@@ -39,7 +39,7 @@ export class App {
 
   private configure = () => {
     this.app.use(cors());
-    this.app.use(express.json());
+    this.app.use(express.json({ limit: "10mb" }));
   };
 
   private registerModules = () => {
