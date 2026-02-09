@@ -26,6 +26,7 @@ import { CloudinaryService } from "./modules/cloudinary/cloudinary.service.js";
 import { MailService } from "./modules/mail/mail.service.js";
 import { Scheduler } from "./jobs/scheduler.js";
 import { cookieOptions } from "./config/cookie.js";
+import { corsOptions } from "./config/cors.js";
 import cookieParser from "cookie-parser";
 
 const PORT = 8000;
@@ -41,7 +42,7 @@ export class App {
   }
 
   private configure = () => {
-    this.app.use(cors(cookieOptions));
+    this.app.use(cors(corsOptions));
     this.app.use(express.json({ limit: "10mb" }));
     this.app.use(cookieParser());
   };
