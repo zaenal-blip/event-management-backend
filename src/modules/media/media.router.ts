@@ -1,14 +1,11 @@
 import express, { Router } from "express";
 import { MediaController } from "./media.controller.js";
-import { UploadMiddleware } from "../../middleware/uploader.middleware.js";
+import { uploader } from "../../middleware/uploader.middleware.js";
 
 export class MediaRouter {
   private router: Router;
 
-  constructor(
-    private mediaController: MediaController,
-    private uploadMiddleware: UploadMiddleware,
-  ) {
+  constructor(private mediaController: MediaController) {
     this.router = express.Router();
     this.initRoutes();
   }
@@ -16,8 +13,8 @@ export class MediaRouter {
   private initRoutes = () => {
     this.router.post(
       "/upload",
-      this.uploadMiddleware.upload().single("file"),
-      this.mediaController.uploadFile,
+      uploader.single("file"),
+      this.mediaController.uploadFile
     );
   };
 

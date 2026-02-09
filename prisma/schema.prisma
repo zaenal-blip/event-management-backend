@@ -53,6 +53,18 @@ model PasswordReset {
   @@map("password_resets")
 }
 
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("refresh_tokens")
+}
+
 model Organizer {
   id           Int      @id @default(autoincrement())
   userId       Int      @unique
@@ -375,18 +387,6 @@ model Waitlist {
 
   @@unique([userId, eventId, ticketTypeId])
   @@map("waitlists")
-}
-
-model RefreshToken {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
-  userId    Int      @unique
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiredAt DateTime
-
-  @@map("refresh_tokens")
 }
 
 enum Role {
