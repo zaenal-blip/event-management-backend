@@ -1,9 +1,7 @@
 
 import * as fs from 'fs';
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../src/lib/prisma.js";
 import { TransactionService } from "../src/modules/transaction/transaction.service.js";
-
-const prisma = new PrismaClient();
 const transactionService = new TransactionService(prisma);
 
 async function main() {

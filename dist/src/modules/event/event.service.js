@@ -5,7 +5,7 @@ export class EventService {
         this.prisma = prisma;
     }
     getEvents = async (query) => {
-        const { page, take, sortBy, sortOrder, search, category, location, priceRange, startDate, endDate } = query;
+        const { page, take, sortBy, sortOrder, search, category, location, priceRange, startDate, endDate, } = query;
         const whereClause = {
             status: "PUBLISHED",
         };

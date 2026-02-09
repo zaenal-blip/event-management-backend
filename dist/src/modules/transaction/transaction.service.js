@@ -6,7 +6,7 @@ export class TransactionService {
         this.prisma = prisma;
     }
     createTransaction = async (userId, eventId, body) => {
-        const { ticketTypeId, quantity, voucherCode, couponCode, pointsToUse = 0 } = body;
+        const { ticketTypeId, quantity, voucherCode, couponCode, pointsToUse = 0, } = body;
         // Validate quantity
         if (quantity <= 0) {
             throw new ApiError("Quantity must be greater than 0", 400);
@@ -443,7 +443,7 @@ export class TransactionService {
         // In this specific method 'cancelTransaction', it checks if transaction.userId === userId, so it's the customer cancelling.
         // So we notify the organizer.
         // But wait, the standard flow says "Organizer doesn't accept/reject within 3 days -> Auto Cancel".
-        // This endpoint allows USER to cancel? Checking logic... 
+        // This endpoint allows USER to cancel? Checking logic...
         // Yes: "transaction.userId !== userId -> throw 403". So this is CUSTOMER cancelling.
         await sendEmail({
             to: organizerEmail || "", // Should be available
@@ -514,7 +514,8 @@ export class TransactionService {
         const organizer = await this.prisma.organizer.findUnique({
             where: { userId },
         });
-        if (transaction.userId !== userId && (!organizer || transaction.event.organizerId !== organizer.id)) {
+        if (transaction.userId !== userId &&
+            (!organizer || transaction.event.organizerId !== organizer.id)) {
             throw new ApiError("You don't have permission to view this transaction", 403);
         }
         return transaction;
