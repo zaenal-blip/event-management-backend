@@ -2,8 +2,12 @@ import { ApiError } from "../../utils/api-error.js";
 import { comparePassword, hashPassword } from "../../lib/argon.js";
 export class UserService {
     prisma;
-    constructor(prisma) {
+    cloudinaryService;
+    mailService;
+    constructor(prisma, cloudinaryService, mailService) {
         this.prisma = prisma;
+        this.cloudinaryService = cloudinaryService;
+        this.mailService = mailService;
     }
     getUsers = async (query) => {
         const { page, sortBy, sortOrder, take, search } = query;
@@ -92,6 +96,21 @@ export class UserService {
             where: { id },
             data: { password: hashedNewPassword },
         });
+        // Send email notification
+        const now = new Date();
+        await this.mailService.sendEmail(user.email, "Your Password Was Changed - Eventku", "password-changed", {
+            name: user.name,
+            date: now.toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            }),
+            time: now.toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+            }),
+        });
         return { message: "Password updated successfully" };
     };
     /**
@@ -108,7 +127,19 @@ export class UserService {
                 },
             });
             if (existingUser) {
-                throw new ApiError("Email already exist", 400);
+                throw new ApiError("Email already taken", 400);
+            }
+        }
+        // If phone is being updated, check if it's already taken by another user
+        if (body.phone) {
+            const existingUser = await this.prisma.user.findFirst({
+                where: {
+                    phone: body.phone,
+                    id: { not: id }, // Exclude current user
+                },
+            });
+            if (existingUser) {
+                throw new ApiError("Phone number already taken", 400);
             }
         }
         // Build update data object with only provided fields
@@ -121,11 +152,19 @@ export class UserService {
             updateData.phone = body.phone;
         if (body.avatar !== undefined)
             updateData.avatar = body.avatar;
-        await this.prisma.user.update({
+        // Check if avatar is being updated and remove old one from Cloudinary
+        if (body.avatar && body.avatar !== (await this.getUser(id)).avatar) {
+            const currentUser = await this.getUser(id);
+            if (currentUser.avatar) {
+                await this.cloudinaryService.removeByUrl(currentUser.avatar);
+            }
+        }
+        const updatedUser = await this.prisma.user.update({
             where: { id },
             data: updateData,
+            omit: { password: true },
         });
-        return { message: "Profile updated successfully" };
+        return { ...updatedUser, message: "Profile updated successfully" };
     };
     deleteUser = async (id) => {
         await this.getUser(id);
