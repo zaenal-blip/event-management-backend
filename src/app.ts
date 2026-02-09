@@ -23,6 +23,7 @@ import { AuthMiddleware } from "./middleware/auth.middleware.js";
 import { ValidationMiddleware } from "./middleware/validation.middleware.js";
 import { UploadMiddleware } from "./middleware/uploader.middleware.js";
 import { CloudinaryService } from "./modules/cloudinary/cloudinary.service.js";
+import { MailService } from "./modules/mail/mail.service.js";
 import { Scheduler } from "./jobs/scheduler.js";
 
 const PORT = 8000;
@@ -48,8 +49,13 @@ export class App {
 
     // services
     const cloudinaryService = new CloudinaryService();
-    const authService = new AuthService(prismaClient);
-    const userService = new UserService(prismaClient, cloudinaryService);
+    const mailService = new MailService();
+    const authService = new AuthService(prismaClient, mailService);
+    const userService = new UserService(
+      prismaClient,
+      cloudinaryService,
+      mailService,
+    );
     const eventService = new EventService(prismaClient);
     const transactionService = new TransactionService(prismaClient);
     const reviewService = new ReviewService(prismaClient);

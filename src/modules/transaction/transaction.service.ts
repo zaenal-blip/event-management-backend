@@ -1,13 +1,26 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/prisma/client.js";
 import { ApiError } from "../../utils/api-error.js";
-import { CreateTransactionBody, UploadPaymentProofBody } from "../../types/transaction.js";
+import {
+  CreateTransactionBody,
+  UploadPaymentProofBody,
+} from "../../types/transaction.js";
 import { sendEmail } from "../../lib/mail.js";
 
 export class TransactionService {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
-  createTransaction = async (userId: number, eventId: number, body: CreateTransactionBody) => {
-    const { ticketTypeId, quantity, voucherCode, couponCode, pointsToUse = 0 } = body;
+  createTransaction = async (
+    userId: number,
+    eventId: number,
+    body: CreateTransactionBody,
+  ) => {
+    const {
+      ticketTypeId,
+      quantity,
+      voucherCode,
+      couponCode,
+      pointsToUse = 0,
+    } = body;
 
     // Validate quantity
     if (quantity <= 0) {
@@ -67,7 +80,9 @@ export class TransactionService {
 
         voucherId = voucher.id;
         if (voucher.discountType === "PERCENTAGE") {
-          voucherDiscount = Math.floor(subtotal * (voucher.discountAmount / 100));
+          voucherDiscount = Math.floor(
+            subtotal * (voucher.discountAmount / 100),
+          );
         } else {
           voucherDiscount = Math.min(voucher.discountAmount, subtotal);
         }
@@ -91,7 +106,10 @@ export class TransactionService {
         }
 
         couponId = coupon.id;
-        couponDiscount = Math.min(coupon.discountAmount, subtotal - voucherDiscount);
+        couponDiscount = Math.min(
+          coupon.discountAmount,
+          subtotal - voucherDiscount,
+        );
       }
 
       // 5. Check and apply points
@@ -104,10 +122,17 @@ export class TransactionService {
       }
 
       const availablePoints = user.point || 0;
-      const pointsToDeduct = Math.min(pointsToUse, availablePoints, subtotal - voucherDiscount - couponDiscount);
+      const pointsToDeduct = Math.min(
+        pointsToUse,
+        availablePoints,
+        subtotal - voucherDiscount - couponDiscount,
+      );
 
       // 6. Calculate final price
-      const finalPrice = Math.max(0, subtotal - voucherDiscount - couponDiscount - pointsToDeduct);
+      const finalPrice = Math.max(
+        0,
+        subtotal - voucherDiscount - couponDiscount - pointsToDeduct,
+      );
 
       // 7. Update available seats
       await tx.ticketType.update({
@@ -204,7 +229,11 @@ export class TransactionService {
     return transaction;
   };
 
-  uploadPaymentProof = async (transactionId: number, userId: number, body: UploadPaymentProofBody) => {
+  uploadPaymentProof = async (
+    transactionId: number,
+    userId: number,
+    body: UploadPaymentProofBody,
+  ) => {
     const transaction = await this.prisma.transaction.findUnique({
       where: { id: transactionId },
     });
@@ -214,7 +243,10 @@ export class TransactionService {
     }
 
     if (transaction.userId !== userId) {
-      throw new ApiError("You don't have permission to update this transaction", 403);
+      throw new ApiError(
+        "You don't have permission to update this transaction",
+        403,
+      );
     }
 
     if (transaction.status !== "WAITING_PAYMENT") {
@@ -286,11 +318,17 @@ export class TransactionService {
     }
 
     if (transaction.event.organizerId !== organizer.id) {
-      throw new ApiError("You don't have permission to confirm this transaction", 403);
+      throw new ApiError(
+        "You don't have permission to confirm this transaction",
+        403,
+      );
     }
 
     if (transaction.status !== "WAITING_CONFIRMATION") {
-      throw new ApiError("Transaction is not in waiting confirmation status", 400);
+      throw new ApiError(
+        "Transaction is not in waiting confirmation status",
+        400,
+      );
     }
 
     const updatedTransaction = await this.prisma.transaction.update({
@@ -366,11 +404,17 @@ export class TransactionService {
     }
 
     if (transaction.event.organizerId !== organizer.id) {
-      throw new ApiError("You don't have permission to reject this transaction", 403);
+      throw new ApiError(
+        "You don't have permission to reject this transaction",
+        403,
+      );
     }
 
     if (transaction.status !== "WAITING_CONFIRMATION") {
-      throw new ApiError("Transaction is not in waiting confirmation status", 400);
+      throw new ApiError(
+        "Transaction is not in waiting confirmation status",
+        400,
+      );
     }
 
     // Rollback in transaction
@@ -436,10 +480,15 @@ export class TransactionService {
     }
 
     if (transaction.userId !== userId) {
-      throw new ApiError("You don't have permission to cancel this transaction", 403);
+      throw new ApiError(
+        "You don't have permission to cancel this transaction",
+        403,
+      );
     }
 
-    if (!["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)) {
+    if (
+      !["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)
+    ) {
       throw new ApiError("Transaction cannot be cancelled at this stage", 400);
     }
 
@@ -493,7 +542,7 @@ export class TransactionService {
     // So we notify the organizer.
 
     // But wait, the standard flow says "Organizer doesn't accept/reject within 3 days -> Auto Cancel".
-    // This endpoint allows USER to cancel? Checking logic... 
+    // This endpoint allows USER to cancel? Checking logic...
     // Yes: "transaction.userId !== userId -> throw 403". So this is CUSTOMER cancelling.
 
     await sendEmail({
@@ -519,10 +568,15 @@ export class TransactionService {
     }
 
     if (transaction.userId !== userId) {
-      throw new ApiError("You don't have permission to cancel this transaction", 403);
+      throw new ApiError(
+        "You don't have permission to cancel this transaction",
+        403,
+      );
     }
 
-    if (!["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)) {
+    if (
+      !["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)
+    ) {
       throw new ApiError("Transaction cannot be cancelled at this stage", 400);
     }
 
@@ -633,8 +687,14 @@ export class TransactionService {
       where: { userId },
     });
 
-    if (transaction.userId !== userId && (!organizer || transaction.event.organizerId !== organizer.id)) {
-      throw new ApiError("You don't have permission to view this transaction", 403);
+    if (
+      transaction.userId !== userId &&
+      (!organizer || transaction.event.organizerId !== organizer.id)
+    ) {
+      throw new ApiError(
+        "You don't have permission to view this transaction",
+        403,
+      );
     }
 
     return transaction;
