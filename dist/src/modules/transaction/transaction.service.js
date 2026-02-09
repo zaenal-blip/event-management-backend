@@ -17,17 +17,30 @@ export class TransactionService {
         }
         // Use SQL transaction for atomicity
         const transaction = await this.prisma.$transaction(async (tx) => {
-            // 1. Lock ticket type and check availability
-            const ticketType = await tx.ticketType.findUnique({
-                where: { id: ticketTypeId },
-                include: {
-                    event: true,
-                },
-            });
-            if (!ticketType) {
+            // 1. Lock ticket type and check availability using Raw SQL for Locking
+            // Prisma doesn't support "FOR UPDATE" natively yet
+            console.log(`[DEBUG] Locking ticketType ${ticketTypeId}`);
+            const ticketTypes = await tx.$queryRaw `
+        SELECT * FROM "ticket_types"
+        WHERE id = ${ticketTypeId}
+        FOR UPDATE
+      `;
+            console.log(`[DEBUG] Locked. Found ${ticketTypes.length} rows`);
+            if (!ticketTypes.length) {
                 throw new ApiError("Ticket type not found", 404);
             }
-            if (ticketType.eventId !== eventId) {
+            const ticketType = ticketTypes[0];
+            // Need to fetch event relation separately or assume consistency
+            // Since we need eventId validation, let's fetch event with standard query
+            // The TicketType is already locked so this read is safe from race conditions on TicketType
+            const ticketTypeRelation = await tx.ticketType.findUnique({
+                where: { id: ticketTypeId },
+                include: { event: true },
+            });
+            if (!ticketTypeRelation) { // Should not happen given above check
+                throw new ApiError("Ticket type not found", 404);
+            }
+            if (ticketTypeRelation.eventId !== eventId) {
                 throw new ApiError("Ticket type does not belong to this event", 400);
             }
             if (ticketType.availableSeat < quantity) {
@@ -129,7 +142,7 @@ export class TransactionService {
                     data: {
                         userId,
                         amount: -pointsToDeduct,
-                        description: `Used for transaction on event: ${ticketType.event.title}`,
+                        description: `Used for transaction on event: ${ticketTypeRelation.event.title}`,
                         type: "USED",
                     },
                 });
@@ -195,16 +208,16 @@ export class TransactionService {
             await this.rollbackTransaction(transactionId);
             throw new ApiError("Payment deadline has expired", 400);
         }
-        // Set decision deadline (3 days from now)
-        const decisionDeadline = new Date();
-        decisionDeadline.setDate(decisionDeadline.getDate() + 3);
         const updatedTransaction = await this.prisma.transaction.update({
             where: { id: transactionId },
             data: {
                 paymentProof: body.paymentProof,
                 status: "WAITING_CONFIRMATION",
-                // Store decision deadline in updatedAt for now, or add a new field
-                updatedAt: decisionDeadline,
+                // We do NOT manually set updatedAt here. 
+                // Prisma @updatedAt will automatically set it to NOW.
+                // The detailed rule says: "If organizer doesn't accept/reject within 3 days".
+                // The job checks: updatedAt < NOW - 3 Days.
+                // So resetting updatedAt to NOW is exactly what we want to start the 3-day timer.
             },
             include: {
                 event: {
