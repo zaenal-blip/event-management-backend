@@ -1,9 +1,10 @@
-import { Prisma, PrismaClient, User } from "@prisma/client";
+import { Prisma, PrismaClient, User } from "../../generated/prisma/client.js";
 import { PaginationQueryParams } from "../../types/pagination.js";
 import { CreateUserBody } from "../../types/user.js";
 import { ApiError } from "../../utils/api-error.js";
 import { comparePassword, hashPassword } from "../../lib/argon.js";
 import { CloudinaryService } from "../cloudinary/cloudinary.service.js";
+import { MailService } from "../mail/mail.service.js";
 
 interface GetUsersQuery extends PaginationQueryParams {
   search: string;
@@ -13,6 +14,7 @@ export class UserService {
   constructor(
     private prisma: PrismaClient,
     private cloudinaryService: CloudinaryService,
+    private mailService: MailService,
   ) {}
 
   getUsers = async (query: GetUsersQuery) => {
@@ -130,6 +132,27 @@ export class UserService {
       where: { id },
       data: { password: hashedNewPassword },
     });
+
+    // Send email notification
+    const now = new Date();
+    await this.mailService.sendEmail(
+      user.email,
+      "Your Password Was Changed - Eventku",
+      "password-changed",
+      {
+        name: user.name,
+        date: now.toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        time: now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      },
+    );
 
     return { message: "Password updated successfully" };
   };
