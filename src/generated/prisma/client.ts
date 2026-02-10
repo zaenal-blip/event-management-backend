@@ -50,6 +50,11 @@ export type User = Prisma.UserModel
  */
 export type PasswordReset = Prisma.PasswordResetModel
 /**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
+/**
  * Model Organizer
  * 
  */
@@ -139,8 +144,3 @@ export type Notification = Prisma.NotificationModel
  * 
  */
 export type Waitlist = Prisma.WaitlistModel
-/**
- * Model RefreshToken
- * 
- */
-export type RefreshToken = Prisma.RefreshTokenModel

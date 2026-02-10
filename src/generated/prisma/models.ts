@@ -10,6 +10,7 @@
  */
 export type * from './models/User.js'
 export type * from './models/PasswordReset.js'
+export type * from './models/RefreshToken.js'
 export type * from './models/Organizer.js'
 export type * from './models/Event.js'
 export type * from './models/TicketType.js'
@@ -28,5 +29,4 @@ export type * from './models/EventTag.js'
 export type * from './models/Wishlist.js'
 export type * from './models/Notification.js'
 export type * from './models/Waitlist.js'
-export type * from './models/RefreshToken.js'
 export type * from './commonInputTypes.js'
