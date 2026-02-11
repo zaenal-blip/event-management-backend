@@ -122,3 +122,8 @@ export type Notification = Prisma.NotificationModel
  * 
  */
 export type Waitlist = Prisma.WaitlistModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
