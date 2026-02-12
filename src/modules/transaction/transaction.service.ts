@@ -1,10 +1,13 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { ApiError } from "../../utils/api-error.js";
-import { CreateTransactionBody, UploadPaymentProofBody } from "../../types/transaction.js";
+import {
+  CreateTransactionBody,
+  UploadPaymentProofBody,
+} from "../../types/transaction.js";
 import { sendEmail } from "../../lib/mail.js";
 
 export class TransactionService {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   createTransaction = async (
     userId: number,
@@ -18,7 +21,6 @@ export class TransactionService {
       couponCode,
       pointsToUse = 0,
     } = body;
-
 
     // Validate quantity
     if (quantity <= 0) {
@@ -56,7 +58,8 @@ export class TransactionService {
         include: { event: true },
       });
 
-      if (!ticketTypeRelation) { // Should not happen given above check
+      if (!ticketTypeRelation) {
+        // Should not happen given above check
         throw new ApiError("Ticket type not found", 404);
       }
 
@@ -279,7 +282,7 @@ export class TransactionService {
       data: {
         paymentProof: body.paymentProof,
         status: "WAITING_CONFIRMATION",
-        // We do NOT manually set updatedAt here. 
+        // We do NOT manually set updatedAt here.
         // Prisma @updatedAt will automatically set it to NOW.
         // The detailed rule says: "If organizer doesn't accept/reject within 3 days".
         // The job checks: updatedAt < NOW - 3 Days.
@@ -493,10 +496,15 @@ export class TransactionService {
     }
 
     if (transaction.userId !== userId) {
-      throw new ApiError("You don't have permission to cancel this transaction", 403);
+      throw new ApiError(
+        "You don't have permission to cancel this transaction",
+        403,
+      );
     }
 
-    if (!["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)) {
+    if (
+      !["WAITING_PAYMENT", "WAITING_CONFIRMATION"].includes(transaction.status)
+    ) {
       throw new ApiError("Transaction cannot be cancelled at this stage", 400);
     }
 
@@ -550,7 +558,7 @@ export class TransactionService {
     // So we notify the organizer.
 
     // But wait, the standard flow says "Organizer doesn't accept/reject within 3 days -> Auto Cancel".
-    // This endpoint allows USER to cancel? Checking logic... 
+    // This endpoint allows USER to cancel? Checking logic...
     // Yes: "transaction.userId !== userId -> throw 403". So this is CUSTOMER cancelling.
 
     await sendEmail({
@@ -565,8 +573,6 @@ export class TransactionService {
 
     return updatedTransaction;
   };
-
-
 
   getMyTransactions = async (userId: number) => {
     const transactions = await this.prisma.transaction.findMany({
@@ -604,7 +610,9 @@ export class TransactionService {
     });
 
     if (!organizer) {
-      throw new ApiError("Organizer not found", 404);
+      // If organizer profile doesn't exist, they have no transactions yet.
+      // Return empty list instead of error.
+      return [];
     }
 
     // 2. Get all transactions for events belonging to this organizer

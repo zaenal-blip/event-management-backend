@@ -66,16 +66,21 @@ model RefreshToken {
 }
 
 model Organizer {
-  id           Int      @id @default(autoincrement())
-  userId       Int      @unique
-  name         String
-  avatar       String?
-  bio          String?
-  rating       Float    @default(0)
-  totalEvents  Int      @default(0)
-  totalReviews Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                         Int      @id @default(autoincrement())
+  userId                     Int      @unique
+  name                       String
+  avatar                     String?
+  bio                        String?
+  contactInfo                String?
+  notificationEmail          String?
+  publicProfileVisible       Boolean  @default(true)
+  defaultMinPurchase         Int      @default(0)
+  defaultVoucherValidityDays Int      @default(30)
+  rating                     Float    @default(0)
+  totalEvents                Int      @default(0)
+  totalReviews               Int      @default(0)
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
 
   // Relations
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -49,6 +49,19 @@ export class UserController {
     res.status(200).send(result);
   };
 
+  updateOrganizerProfile = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const body = req.body;
+    const result = await this.userService.updateOrganizerProfile(id, body);
+    res.status(200).send(result);
+  };
+
+  getOrganizerProfile = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const result = await this.userService.getOrganizerProfile(id);
+    res.status(200).send(result);
+  };
+
   deleteUser = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const result = await this.userService.deleteUser(id);

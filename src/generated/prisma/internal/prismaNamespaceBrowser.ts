@@ -71,8 +71,7 @@ export const ModelName = {
   EventTag: 'EventTag',
   Wishlist: 'Wishlist',
   Notification: 'Notification',
-  Waitlist: 'Waitlist',
-  RefreshToken: 'RefreshToken'
+  Waitlist: 'Waitlist'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -140,6 +139,12 @@ export const OrganizerScalarFieldEnum = {
   name: 'name',
   avatar: 'avatar',
   bio: 'bio',
+  contactInfo: 'contactInfo',
+  notificationEmail: 'notificationEmail',
+  publicProfileVisible: 'publicProfileVisible',
+  defaultMinPurchase: 'defaultMinPurchase',
+  defaultVoucherValidityDays: 'defaultVoucherValidityDays',
+  referralRewardAmount: 'referralRewardAmount',
   rating: 'rating',
   totalEvents: 'totalEvents',
   totalReviews: 'totalReviews',
@@ -382,18 +387,6 @@ export const WaitlistScalarFieldEnum = {
 } as const
 
 export type WaitlistScalarFieldEnum = (typeof WaitlistScalarFieldEnum)[keyof typeof WaitlistScalarFieldEnum]
-
-
-export const RefreshTokenScalarFieldEnum = {
-  id: 'id',
-  token: 'token',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  expiredAt: 'expiredAt'
-} as const
-
-export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -29,6 +29,9 @@ export type AggregateOrganizer = {
 export type OrganizerAvgAggregateOutputType = {
   id: number | null
   userId: number | null
+  defaultMinPurchase: number | null
+  defaultVoucherValidityDays: number | null
+  referralRewardAmount: number | null
   rating: number | null
   totalEvents: number | null
   totalReviews: number | null
@@ -37,6 +40,9 @@ export type OrganizerAvgAggregateOutputType = {
 export type OrganizerSumAggregateOutputType = {
   id: number | null
   userId: number | null
+  defaultMinPurchase: number | null
+  defaultVoucherValidityDays: number | null
+  referralRewardAmount: number | null
   rating: number | null
   totalEvents: number | null
   totalReviews: number | null
@@ -48,6 +54,12 @@ export type OrganizerMinAggregateOutputType = {
   name: string | null
   avatar: string | null
   bio: string | null
+  contactInfo: string | null
+  notificationEmail: string | null
+  publicProfileVisible: boolean | null
+  defaultMinPurchase: number | null
+  defaultVoucherValidityDays: number | null
+  referralRewardAmount: number | null
   rating: number | null
   totalEvents: number | null
   totalReviews: number | null
@@ -61,6 +73,12 @@ export type OrganizerMaxAggregateOutputType = {
   name: string | null
   avatar: string | null
   bio: string | null
+  contactInfo: string | null
+  notificationEmail: string | null
+  publicProfileVisible: boolean | null
+  defaultMinPurchase: number | null
+  defaultVoucherValidityDays: number | null
+  referralRewardAmount: number | null
   rating: number | null
   totalEvents: number | null
   totalReviews: number | null
@@ -74,6 +92,12 @@ export type OrganizerCountAggregateOutputType = {
   name: number
   avatar: number
   bio: number
+  contactInfo: number
+  notificationEmail: number
+  publicProfileVisible: number
+  defaultMinPurchase: number
+  defaultVoucherValidityDays: number
+  referralRewardAmount: number
   rating: number
   totalEvents: number
   totalReviews: number
@@ -86,6 +110,9 @@ export type OrganizerCountAggregateOutputType = {
 export type OrganizerAvgAggregateInputType = {
   id?: true
   userId?: true
+  defaultMinPurchase?: true
+  defaultVoucherValidityDays?: true
+  referralRewardAmount?: true
   rating?: true
   totalEvents?: true
   totalReviews?: true
@@ -94,6 +121,9 @@ export type OrganizerAvgAggregateInputType = {
 export type OrganizerSumAggregateInputType = {
   id?: true
   userId?: true
+  defaultMinPurchase?: true
+  defaultVoucherValidityDays?: true
+  referralRewardAmount?: true
   rating?: true
   totalEvents?: true
   totalReviews?: true
@@ -105,6 +135,12 @@ export type OrganizerMinAggregateInputType = {
   name?: true
   avatar?: true
   bio?: true
+  contactInfo?: true
+  notificationEmail?: true
+  publicProfileVisible?: true
+  defaultMinPurchase?: true
+  defaultVoucherValidityDays?: true
+  referralRewardAmount?: true
   rating?: true
   totalEvents?: true
   totalReviews?: true
@@ -118,6 +154,12 @@ export type OrganizerMaxAggregateInputType = {
   name?: true
   avatar?: true
   bio?: true
+  contactInfo?: true
+  notificationEmail?: true
+  publicProfileVisible?: true
+  defaultMinPurchase?: true
+  defaultVoucherValidityDays?: true
+  referralRewardAmount?: true
   rating?: true
   totalEvents?: true
   totalReviews?: true
@@ -131,6 +173,12 @@ export type OrganizerCountAggregateInputType = {
   name?: true
   avatar?: true
   bio?: true
+  contactInfo?: true
+  notificationEmail?: true
+  publicProfileVisible?: true
+  defaultMinPurchase?: true
+  defaultVoucherValidityDays?: true
+  referralRewardAmount?: true
   rating?: true
   totalEvents?: true
   totalReviews?: true
@@ -231,6 +279,12 @@ export type OrganizerGroupByOutputType = {
   name: string
   avatar: string | null
   bio: string | null
+  contactInfo: string | null
+  notificationEmail: string | null
+  publicProfileVisible: boolean
+  defaultMinPurchase: number
+  defaultVoucherValidityDays: number
+  referralRewardAmount: number
   rating: number
   totalEvents: number
   totalReviews: number
@@ -267,6 +321,12 @@ export type OrganizerWhereInput = {
   name?: Prisma.StringFilter<"Organizer"> | string
   avatar?: Prisma.StringNullableFilter<"Organizer"> | string | null
   bio?: Prisma.StringNullableFilter<"Organizer"> | string | null
+  contactInfo?: Prisma.StringNullableFilter<"Organizer"> | string | null
+  notificationEmail?: Prisma.StringNullableFilter<"Organizer"> | string | null
+  publicProfileVisible?: Prisma.BoolFilter<"Organizer"> | boolean
+  defaultMinPurchase?: Prisma.IntFilter<"Organizer"> | number
+  defaultVoucherValidityDays?: Prisma.IntFilter<"Organizer"> | number
+  referralRewardAmount?: Prisma.IntFilter<"Organizer"> | number
   rating?: Prisma.FloatFilter<"Organizer"> | number
   totalEvents?: Prisma.IntFilter<"Organizer"> | number
   totalReviews?: Prisma.IntFilter<"Organizer"> | number
@@ -282,6 +342,12 @@ export type OrganizerOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   avatar?: Prisma.SortOrderInput | Prisma.SortOrder
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactInfo?: Prisma.SortOrderInput | Prisma.SortOrder
+  notificationEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  publicProfileVisible?: Prisma.SortOrder
+  defaultMinPurchase?: Prisma.SortOrder
+  defaultVoucherValidityDays?: Prisma.SortOrder
+  referralRewardAmount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
@@ -300,6 +366,12 @@ export type OrganizerWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Organizer"> | string
   avatar?: Prisma.StringNullableFilter<"Organizer"> | string | null
   bio?: Prisma.StringNullableFilter<"Organizer"> | string | null
+  contactInfo?: Prisma.StringNullableFilter<"Organizer"> | string | null
+  notificationEmail?: Prisma.StringNullableFilter<"Organizer"> | string | null
+  publicProfileVisible?: Prisma.BoolFilter<"Organizer"> | boolean
+  defaultMinPurchase?: Prisma.IntFilter<"Organizer"> | number
+  defaultVoucherValidityDays?: Prisma.IntFilter<"Organizer"> | number
+  referralRewardAmount?: Prisma.IntFilter<"Organizer"> | number
   rating?: Prisma.FloatFilter<"Organizer"> | number
   totalEvents?: Prisma.IntFilter<"Organizer"> | number
   totalReviews?: Prisma.IntFilter<"Organizer"> | number
@@ -315,6 +387,12 @@ export type OrganizerOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   avatar?: Prisma.SortOrderInput | Prisma.SortOrder
   bio?: Prisma.SortOrderInput | Prisma.SortOrder
+  contactInfo?: Prisma.SortOrderInput | Prisma.SortOrder
+  notificationEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  publicProfileVisible?: Prisma.SortOrder
+  defaultMinPurchase?: Prisma.SortOrder
+  defaultVoucherValidityDays?: Prisma.SortOrder
+  referralRewardAmount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
@@ -336,6 +414,12 @@ export type OrganizerScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Organizer"> | string
   avatar?: Prisma.StringNullableWithAggregatesFilter<"Organizer"> | string | null
   bio?: Prisma.StringNullableWithAggregatesFilter<"Organizer"> | string | null
+  contactInfo?: Prisma.StringNullableWithAggregatesFilter<"Organizer"> | string | null
+  notificationEmail?: Prisma.StringNullableWithAggregatesFilter<"Organizer"> | string | null
+  publicProfileVisible?: Prisma.BoolWithAggregatesFilter<"Organizer"> | boolean
+  defaultMinPurchase?: Prisma.IntWithAggregatesFilter<"Organizer"> | number
+  defaultVoucherValidityDays?: Prisma.IntWithAggregatesFilter<"Organizer"> | number
+  referralRewardAmount?: Prisma.IntWithAggregatesFilter<"Organizer"> | number
   rating?: Prisma.FloatWithAggregatesFilter<"Organizer"> | number
   totalEvents?: Prisma.IntWithAggregatesFilter<"Organizer"> | number
   totalReviews?: Prisma.IntWithAggregatesFilter<"Organizer"> | number
@@ -347,6 +431,12 @@ export type OrganizerCreateInput = {
   name: string
   avatar?: string | null
   bio?: string | null
+  contactInfo?: string | null
+  notificationEmail?: string | null
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: number
+  defaultVoucherValidityDays?: number
+  referralRewardAmount?: number
   rating?: number
   totalEvents?: number
   totalReviews?: number
@@ -362,6 +452,12 @@ export type OrganizerUncheckedCreateInput = {
   name: string
   avatar?: string | null
   bio?: string | null
+  contactInfo?: string | null
+  notificationEmail?: string | null
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: number
+  defaultVoucherValidityDays?: number
+  referralRewardAmount?: number
   rating?: number
   totalEvents?: number
   totalReviews?: number
@@ -374,6 +470,12 @@ export type OrganizerUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -389,6 +491,12 @@ export type OrganizerUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -403,6 +511,12 @@ export type OrganizerCreateManyInput = {
   name: string
   avatar?: string | null
   bio?: string | null
+  contactInfo?: string | null
+  notificationEmail?: string | null
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: number
+  defaultVoucherValidityDays?: number
+  referralRewardAmount?: number
   rating?: number
   totalEvents?: number
   totalReviews?: number
@@ -414,6 +528,12 @@ export type OrganizerUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -427,6 +547,12 @@ export type OrganizerUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -445,6 +571,12 @@ export type OrganizerCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   avatar?: Prisma.SortOrder
   bio?: Prisma.SortOrder
+  contactInfo?: Prisma.SortOrder
+  notificationEmail?: Prisma.SortOrder
+  publicProfileVisible?: Prisma.SortOrder
+  defaultMinPurchase?: Prisma.SortOrder
+  defaultVoucherValidityDays?: Prisma.SortOrder
+  referralRewardAmount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
@@ -455,6 +587,9 @@ export type OrganizerCountOrderByAggregateInput = {
 export type OrganizerAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  defaultMinPurchase?: Prisma.SortOrder
+  defaultVoucherValidityDays?: Prisma.SortOrder
+  referralRewardAmount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
@@ -466,6 +601,12 @@ export type OrganizerMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   avatar?: Prisma.SortOrder
   bio?: Prisma.SortOrder
+  contactInfo?: Prisma.SortOrder
+  notificationEmail?: Prisma.SortOrder
+  publicProfileVisible?: Prisma.SortOrder
+  defaultMinPurchase?: Prisma.SortOrder
+  defaultVoucherValidityDays?: Prisma.SortOrder
+  referralRewardAmount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
@@ -479,6 +620,12 @@ export type OrganizerMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   avatar?: Prisma.SortOrder
   bio?: Prisma.SortOrder
+  contactInfo?: Prisma.SortOrder
+  notificationEmail?: Prisma.SortOrder
+  publicProfileVisible?: Prisma.SortOrder
+  defaultMinPurchase?: Prisma.SortOrder
+  defaultVoucherValidityDays?: Prisma.SortOrder
+  referralRewardAmount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
@@ -489,6 +636,9 @@ export type OrganizerMinOrderByAggregateInput = {
 export type OrganizerSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  defaultMinPurchase?: Prisma.SortOrder
+  defaultVoucherValidityDays?: Prisma.SortOrder
+  referralRewardAmount?: Prisma.SortOrder
   rating?: Prisma.SortOrder
   totalEvents?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
@@ -531,6 +681,10 @@ export type OrganizerUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizerUpdateToOneWithWhereWithoutUserInput, Prisma.OrganizerUpdateWithoutUserInput>, Prisma.OrganizerUncheckedUpdateWithoutUserInput>
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -557,6 +711,12 @@ export type OrganizerCreateWithoutUserInput = {
   name: string
   avatar?: string | null
   bio?: string | null
+  contactInfo?: string | null
+  notificationEmail?: string | null
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: number
+  defaultVoucherValidityDays?: number
+  referralRewardAmount?: number
   rating?: number
   totalEvents?: number
   totalReviews?: number
@@ -570,6 +730,12 @@ export type OrganizerUncheckedCreateWithoutUserInput = {
   name: string
   avatar?: string | null
   bio?: string | null
+  contactInfo?: string | null
+  notificationEmail?: string | null
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: number
+  defaultVoucherValidityDays?: number
+  referralRewardAmount?: number
   rating?: number
   totalEvents?: number
   totalReviews?: number
@@ -598,6 +764,12 @@ export type OrganizerUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -611,6 +783,12 @@ export type OrganizerUncheckedUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -623,6 +801,12 @@ export type OrganizerCreateWithoutEventsInput = {
   name: string
   avatar?: string | null
   bio?: string | null
+  contactInfo?: string | null
+  notificationEmail?: string | null
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: number
+  defaultVoucherValidityDays?: number
+  referralRewardAmount?: number
   rating?: number
   totalEvents?: number
   totalReviews?: number
@@ -637,6 +821,12 @@ export type OrganizerUncheckedCreateWithoutEventsInput = {
   name: string
   avatar?: string | null
   bio?: string | null
+  contactInfo?: string | null
+  notificationEmail?: string | null
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: number
+  defaultVoucherValidityDays?: number
+  referralRewardAmount?: number
   rating?: number
   totalEvents?: number
   totalReviews?: number
@@ -664,6 +854,12 @@ export type OrganizerUpdateWithoutEventsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -678,6 +874,12 @@ export type OrganizerUncheckedUpdateWithoutEventsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contactInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notificationEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  publicProfileVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultMinPurchase?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultVoucherValidityDays?: Prisma.IntFieldUpdateOperationsInput | number
+  referralRewardAmount?: Prisma.IntFieldUpdateOperationsInput | number
   rating?: Prisma.FloatFieldUpdateOperationsInput | number
   totalEvents?: Prisma.IntFieldUpdateOperationsInput | number
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
@@ -722,6 +924,12 @@ export type OrganizerSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   name?: boolean
   avatar?: boolean
   bio?: boolean
+  contactInfo?: boolean
+  notificationEmail?: boolean
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: boolean
+  defaultVoucherValidityDays?: boolean
+  referralRewardAmount?: boolean
   rating?: boolean
   totalEvents?: boolean
   totalReviews?: boolean
@@ -738,6 +946,12 @@ export type OrganizerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   avatar?: boolean
   bio?: boolean
+  contactInfo?: boolean
+  notificationEmail?: boolean
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: boolean
+  defaultVoucherValidityDays?: boolean
+  referralRewardAmount?: boolean
   rating?: boolean
   totalEvents?: boolean
   totalReviews?: boolean
@@ -752,6 +966,12 @@ export type OrganizerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   name?: boolean
   avatar?: boolean
   bio?: boolean
+  contactInfo?: boolean
+  notificationEmail?: boolean
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: boolean
+  defaultVoucherValidityDays?: boolean
+  referralRewardAmount?: boolean
   rating?: boolean
   totalEvents?: boolean
   totalReviews?: boolean
@@ -766,6 +986,12 @@ export type OrganizerSelectScalar = {
   name?: boolean
   avatar?: boolean
   bio?: boolean
+  contactInfo?: boolean
+  notificationEmail?: boolean
+  publicProfileVisible?: boolean
+  defaultMinPurchase?: boolean
+  defaultVoucherValidityDays?: boolean
+  referralRewardAmount?: boolean
   rating?: boolean
   totalEvents?: boolean
   totalReviews?: boolean
@@ -773,7 +999,7 @@ export type OrganizerSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrganizerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "avatar" | "bio" | "rating" | "totalEvents" | "totalReviews" | "createdAt" | "updatedAt", ExtArgs["result"]["organizer"]>
+export type OrganizerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "avatar" | "bio" | "contactInfo" | "notificationEmail" | "publicProfileVisible" | "defaultMinPurchase" | "defaultVoucherValidityDays" | "referralRewardAmount" | "rating" | "totalEvents" | "totalReviews" | "createdAt" | "updatedAt", ExtArgs["result"]["organizer"]>
 export type OrganizerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   events?: boolean | Prisma.Organizer$eventsArgs<ExtArgs>
@@ -798,6 +1024,12 @@ export type $OrganizerPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     name: string
     avatar: string | null
     bio: string | null
+    contactInfo: string | null
+    notificationEmail: string | null
+    publicProfileVisible: boolean
+    defaultMinPurchase: number
+    defaultVoucherValidityDays: number
+    referralRewardAmount: number
     rating: number
     totalEvents: number
     totalReviews: number
@@ -1233,6 +1465,12 @@ export interface OrganizerFieldRefs {
   readonly name: Prisma.FieldRef<"Organizer", 'String'>
   readonly avatar: Prisma.FieldRef<"Organizer", 'String'>
   readonly bio: Prisma.FieldRef<"Organizer", 'String'>
+  readonly contactInfo: Prisma.FieldRef<"Organizer", 'String'>
+  readonly notificationEmail: Prisma.FieldRef<"Organizer", 'String'>
+  readonly publicProfileVisible: Prisma.FieldRef<"Organizer", 'Boolean'>
+  readonly defaultMinPurchase: Prisma.FieldRef<"Organizer", 'Int'>
+  readonly defaultVoucherValidityDays: Prisma.FieldRef<"Organizer", 'Int'>
+  readonly referralRewardAmount: Prisma.FieldRef<"Organizer", 'Int'>
   readonly rating: Prisma.FieldRef<"Organizer", 'Float'>
   readonly totalEvents: Prisma.FieldRef<"Organizer", 'Int'>
   readonly totalReviews: Prisma.FieldRef<"Organizer", 'Int'>

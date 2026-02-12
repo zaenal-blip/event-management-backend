@@ -14,7 +14,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaClient,
     private mailService: MailService,
-  ) { }
+  ) {}
 
   register = async (body: CreateUserBody) => {
     //1. Cek avaibilitas email
@@ -74,8 +74,7 @@ export class AuthService {
         await tx.organizer.create({
           data: {
             userId: user.id,
-            name: user.name,
-            avatar: user.avatar,
+            name: "",
           },
         });
       }

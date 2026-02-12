@@ -223,6 +223,85 @@ export class UserService {
     return { ...updatedUser, message: "Profile updated successfully" };
   };
 
+  /**
+   * Update organizer profile
+   */
+  updateOrganizerProfile = async (
+    userId: number,
+    body: {
+      brandName: string;
+      description?: string;
+      contactInfo?: string;
+      notificationEmail?: string;
+      publicProfileVisible?: boolean;
+      defaultMinPurchase?: number;
+      defaultVoucherValidityDays?: number;
+      logo?: string; // from avatar upload in frontend logic, but mapped to avatar in checks
+    },
+  ) => {
+    const user = await this.getUser(userId);
+
+    if (user.role !== "ORGANIZER") {
+      throw new ApiError("User is not an organizer", 403);
+    }
+
+    // Check if organizer profile exists, if not create it (auto-fix consistency)
+    let organizer = await this.prisma.organizer.findUnique({
+      where: { userId },
+    });
+
+    // Handle logo update (similar to avatar)
+    // If a new logo is provided, we might need to delete old one if logic requires
+    // For now, we assume frontend handles upload and sends URL
+
+    // Prepare update data
+    const updateData: any = {
+      name: body.brandName,
+      bio: body.description,
+      contactInfo: body.contactInfo,
+      notificationEmail: body.notificationEmail,
+      publicProfileVisible: body.publicProfileVisible,
+      defaultMinPurchase: body.defaultMinPurchase,
+      defaultVoucherValidityDays: body.defaultVoucherValidityDays,
+    };
+
+    if (body.logo) {
+      updateData.avatar = body.logo; // Map logo to avatar field in Organizer model
+      // Check if logo is being updated and remove old one from Cloudinary
+      if (organizer?.avatar && organizer.avatar !== body.logo) {
+        await this.cloudinaryService.removeByUrl(organizer.avatar);
+      }
+    }
+
+    if (!organizer) {
+      // Create new if missing
+      organizer = await this.prisma.organizer.create({
+        data: {
+          userId,
+          name: body.brandName || user.name, // Fallback
+          ...updateData,
+        },
+      });
+    } else {
+      // Update existing
+      organizer = await this.prisma.organizer.update({
+        where: { userId },
+        data: updateData,
+      });
+    }
+
+    return { ...organizer, message: "Organizer profile updated successfully" };
+  };
+
+  /**
+   * Get organizer profile
+   */
+  getOrganizerProfile = async (userId: number) => {
+    return await this.prisma.organizer.findUnique({
+      where: { userId },
+    });
+  };
+
   deleteUser = async (id: number) => {
     await this.getUser(id);
 

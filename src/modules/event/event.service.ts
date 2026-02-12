@@ -8,7 +8,7 @@ import {
 import { CreateEventDto, CreateTicketTypeDto } from "./dto/create-event.dto.js";
 
 export class EventService {
-  constructor(private prisma: PrismaClient) { }
+  constructor(private prisma: PrismaClient) {}
 
   private getOrCreateOrganizer = async (userId: number) => {
     let organizer = await this.prisma.organizer.findUnique({
@@ -174,8 +174,8 @@ export class EventService {
       include: {
         ticketTypes: true,
         _count: {
-          select: { attendees: true }
-        }
+          select: { attendees: true },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
