@@ -28,6 +28,16 @@ export class UserRouter {
       this.authMiddleware.verifyToken(process.env.JWT_SECRET!),
       this.userController.updateProfile,
     );
+    this.router.patch(
+      "/:id/organizer-profile",
+      this.authMiddleware.verifyToken(process.env.JWT_SECRET!),
+      this.userController.updateOrganizerProfile,
+    );
+    this.router.get(
+      "/:id/organizer-profile",
+      this.authMiddleware.verifyToken(process.env.JWT_SECRET!),
+      this.userController.getOrganizerProfile,
+    );
     this.router.delete("/:id", this.userController.deleteUser);
   };
 

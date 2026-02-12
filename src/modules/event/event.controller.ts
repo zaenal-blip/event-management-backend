@@ -5,9 +5,12 @@ import { GetEventsQuery } from "../../types/event.js";
 import { CreateEventDto } from "./dto/create-event.dto.js";
 
 export class EventController {
-  constructor(private eventService: EventService) { }
+  constructor(private eventService: EventService) {}
 
-  getEvents = async (req: Request<{}, {}, {}, GetEventsQuery>, res: Response) => {
+  getEvents = async (
+    req: Request<{}, {}, {}, GetEventsQuery>,
+    res: Response,
+  ) => {
     const query = {
       page: Number(req.query.page) || 1,
       take: Number(req.query.take) || 10,
@@ -27,6 +30,11 @@ export class EventController {
 
   getEventById = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).send({ message: "Invalid event ID" });
+    }
+
     const result = await this.eventService.getEventById(id);
     res.status(200).send(result);
   };
@@ -36,7 +44,10 @@ export class EventController {
       return res.status(401).send({ message: "Unauthorized" });
     }
 
-    const result = await this.eventService.createEvent(req.user.id, req.body as CreateEventDto);
+    const result = await this.eventService.createEvent(
+      req.user.id,
+      req.body as CreateEventDto,
+    );
     res.status(201).send(result);
   };
 
@@ -46,7 +57,11 @@ export class EventController {
     }
 
     const eventId = Number(req.params.eventId);
-    const result = await this.eventService.createVoucher(eventId, req.user.id, req.body);
+    const result = await this.eventService.createVoucher(
+      eventId,
+      req.user.id,
+      req.body,
+    );
     res.status(201).send(result);
   };
 

@@ -15,7 +15,12 @@ export interface AuthRequest extends Request {
 export class AuthMiddleware {
   verifyToken = (secretKey: string) => {
     return (req: Request, res: Response, next: NextFunction) => {
-      const token = req.headers.authorization?.split(" ")[1];
+      let token = req.headers.authorization?.split(" ")[1];
+
+      if (!token) {
+        token = req.cookies?.accessToken;
+      }
+
       if (!token) {
         throw new ApiError("Token Not Found", 401);
       }

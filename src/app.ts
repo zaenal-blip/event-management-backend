@@ -75,19 +75,22 @@ export class App {
     const authMiddleware = new AuthMiddleware();
     const validationMiddleware = new ValidationMiddleware();
 
-
     // routes
     const authRouter = new AuthRouter(authController, validationMiddleware);
     const userRouter = new UserRouter(userController, authMiddleware);
-    const eventRouter = new EventRouter(eventController, authMiddleware, validationMiddleware);
+    const eventRouter = new EventRouter(
+      eventController,
+      authMiddleware,
+      validationMiddleware,
+    );
     const transactionRouter = new TransactionRouter(
       transactionController,
-      authMiddleware // Inject authMiddleware
+      authMiddleware, // Inject authMiddleware
     );
     const reviewRouter = new ReviewRouter(reviewController, authMiddleware); // Inject authMiddleware
 
     // media
-    const mediaController = new MediaController();
+    const mediaController = new MediaController(cloudinaryService);
     const mediaRouter = new MediaRouter(mediaController);
 
     // entry point
